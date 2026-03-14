@@ -1,11 +1,12 @@
 "use client";
 
 import getSchedule from "@/src/api/getSchedule";
+import PageContent from "@/src/components/layout/PageContent";
 import { useEffect, useState } from "react";
 
 export default function Dashboard() {
 
-  const [stuff, setStuff] = useState<any>(undefined);
+  const [gameMap, setGameMap] = useState<any>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadSuccess, setIsLoadSuccess] = useState(false);
 
@@ -13,7 +14,7 @@ export default function Dashboard() {
     getSchedule().then(res => {
       const isSuccess = res.success;
       if (isSuccess) {
-        setStuff(res.data);
+        setGameMap(res.data);
       }
       console.log(res);
       setIsLoading(false);
@@ -23,8 +24,8 @@ export default function Dashboard() {
 
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <PageContent>
       blah blah blah
-    </div>
+    </PageContent>
   );
 }
