@@ -4,7 +4,7 @@
   --background: #002B5C;
   --background-secondary: #D31145;
   --foreground: #ffffff;
-  --text-color: black;
+  --text-color: #ffffff;
 }
 
 @theme inline {
