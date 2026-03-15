@@ -7,8 +7,8 @@
 :root {
   --background-secondary: #D31145;
   --text-color: #ffffff;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #002B5C;
+  --foreground: #ffffff;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -41,7 +41,13 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 @theme inline {
+  --animate-shimmer: shimmer 1.5s infinite linear;
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
   --color-foreground: var(--foreground);
@@ -87,6 +93,7 @@
 
 body {
   color: var(--text-color);
+  font-family: var(--font-geist-sans), sans-serif;
 }
 
 .dark {

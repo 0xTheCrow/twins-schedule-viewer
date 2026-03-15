@@ -1,6 +1,6 @@
 const getSchedule = async () => {
-  const scheduleRoute = process.env.NEXT_PUBLIC_TWINS_2026_SCHEDULE_API_ROUTE || '';
-  if (scheduleRoute.length == 0) {
+  const scheduleRoute = process.env.NEXT_PUBLIC_TWINS_2026_SCHEDULE_API_ROUTE;
+  if (!scheduleRoute) {
     return {
       success: false,
       data: undefined,
