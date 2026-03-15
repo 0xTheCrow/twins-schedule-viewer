@@ -9,7 +9,7 @@ export default function Home() {
         <p>Minnesota Twins Schedule Viewer</p>
       </header>
       <div className="flex flex-1 justify-center">
-        <main className="flex flex-1 w-full max-w-6xl flex-col py-8 px-16 bg-white sm:items-start">
+        <main className="flex w-full max-w-6xl flex-col py-8 px-16 bg-white sm:items-start">
           <Image
             className="dark:invert"
             src="/next.svg"
