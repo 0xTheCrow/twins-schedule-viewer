@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,13 +23,16 @@ export default function HomeAwayFilter({
   value: HomeAwayValue;
   onChange: (v: HomeAwayValue) => void;
 }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="w-28 rounded-md px-2 py-1.5 text-sm font-medium cursor-pointer hover:bg-white/20 transition-colors">
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger className="inline-flex items-center justify-between gap-1.5 w-36 rounded-md border border-white/20 px-3 py-1.5 text-sm font-medium text-white/90 cursor-pointer hover:bg-white/15 transition-colors">
         {value === "all" ? "Home / Away" : labels[value]}
+        <ChevronDown className="size-3.5 text-white/50" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuRadioGroup value={value} onValueChange={(v) => onChange(v as HomeAwayValue)}>
+        <DropdownMenuRadioGroup value={value} onValueChange={(v) => { onChange(v as HomeAwayValue); setOpen(false); }}>
           {(Object.keys(labels) as HomeAwayValue[]).map((key) => (
             <DropdownMenuRadioItem key={key} value={key}>
               {labels[key]}

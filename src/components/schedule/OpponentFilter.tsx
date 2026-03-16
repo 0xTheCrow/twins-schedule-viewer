@@ -37,18 +37,27 @@ export default function OpponentFilter({
       getItemLabel={(item) => item.label}
       getItemValue={(item) => item.value}
     >
-      <ComboboxChips ref={anchor} className="w-full md:w-64">
+      <ComboboxChips ref={anchor} className="w-full border-white/20 bg-white/5 text-white/90 placeholder:text-white/40">
         {selectedOpponents.map((id) => {
           const opponent = opponentMap.get(Number(id));
           return (
-            <ComboboxChip key={id} value={id}>
+            <ComboboxChip key={id} value={id} className="bg-white/15 text-white/90">
               {opponent?.team.name}
             </ComboboxChip>
           );
         })}
-        <ComboboxChipsInput placeholder="Filter opponents..." />
+        <ComboboxChipsInput placeholder="Filter opponents..." className="text-white/90 placeholder:text-white/40" />
       </ComboboxChips>
-      <ComboboxContent anchor={anchor}>
+      <ComboboxContent anchor={anchor} className="!w-auto !min-w-0">
+        <div className="p-1 border-b border-border">
+          <button
+            type="button"
+            onMouseDown={(e) => { e.preventDefault(); onChange([]); }}
+            className="w-full text-left rounded-md px-1.5 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+          >
+            Clear
+          </button>
+        </div>
         <ComboboxEmpty>No opponents found.</ComboboxEmpty>
         <ComboboxList>
           {(item) => (

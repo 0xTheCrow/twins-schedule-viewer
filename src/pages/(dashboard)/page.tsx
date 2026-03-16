@@ -7,7 +7,6 @@ import ScheduleCardSkeleton from "@/components/schedule/ScheduleCardSkeleton";
 import HomeAwayFilter, { HomeAwayValue } from "@/components/schedule/HomeAwayFilter";
 import MonthNav from "@/components/schedule/MonthNav";
 import OpponentFilter from "@/components/schedule/OpponentFilter";
-import { Switch } from "@/components/ui/switch";
 import { useCallback, useEffect, useRef, useState } from "react";
 import buildScheduleMaps from "@/lib/buildScheduleMaps";
 import { ScheduleMaps } from "@/types/schedule";
@@ -109,24 +108,45 @@ export default function Dashboard() {
   return (
     <PageContent>
       <div className={'flex flex-col gap-4 w-full'}>
-        <div className="flex flex-wrap items-center gap-3 rounded-md bg-white/10 border border-white/20 px-4 py-2.5">
-          <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-            <Switch
-              checked={isUpcomingToggleEnabled}
-              onCheckedChange={(checked) => setIsUpcomingToggleEnabled(checked)}
-            />
-            <span>Upcoming</span>
-          </label>
+        <div className="flex flex-wrap items-center gap-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/15 px-4 py-3">
+          {dataMaps && (
+            <div className="flex-1 min-w-0">
+              <OpponentFilter
+                opponentMap={dataMaps.opponentMap}
+                selectedOpponents={selectedOpponents}
+                onChange={setSelectedOpponents}
+              />
+            </div>
+          )}
           <div className="h-6 w-px bg-white/20" />
           <HomeAwayFilter value={homeAway} onChange={setHomeAway} />
           <div className="h-6 w-px bg-white/20" />
-          {dataMaps && (
-            <OpponentFilter
-              opponentMap={dataMaps.opponentMap}
-              selectedOpponents={selectedOpponents}
-              onChange={setSelectedOpponents}
-            />
-          )}
+          <div className="flex rounded-md bg-white/10 p-0.5 text-sm font-medium select-none">
+            <button
+              type="button"
+              onClick={() => setIsUpcomingToggleEnabled(false)}
+              className={`flex items-center justify-center gap-1.5 px-3 py-1 rounded-md cursor-pointer transition-all duration-200 ${!isUpcomingToggleEnabled ? "bg-white text-[#002B5C] shadow-sm" : "text-white/60 hover:text-white/80"}`}
+            >
+              Past
+              {dataMaps && (
+                <span className={`inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-[10px] font-medium ${!isUpcomingToggleEnabled ? "bg-[#002B5C]/20 text-[#002B5C]" : "bg-white/20 text-white/60"}`}>
+                  {dataMaps.pastGames.length}
+                </span>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsUpcomingToggleEnabled(true)}
+              className={`flex items-center justify-center gap-1.5 px-3 py-1 rounded-md cursor-pointer transition-all duration-200 ${isUpcomingToggleEnabled ? "bg-white text-[#002B5C] shadow-sm" : "text-white/60 hover:text-white/80"}`}
+            >
+              Upcoming
+              {dataMaps && (
+                <span className={`inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-[10px] font-medium ${isUpcomingToggleEnabled ? "bg-[#002B5C]/20 text-[#002B5C]" : "bg-white/20 text-white/60"}`}>
+                  {dataMaps.upcomingGames.length}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
         {(() => {
           if (isLoading) {
@@ -140,7 +160,7 @@ export default function Dashboard() {
           }
           const filtered = getFilteredGameIds();
           if (filtered.length === 0) {
-            return <span>No Games Found</span>;
+            return <span>{`No ${isUpcomingToggleEnabled ? `Upcoming` : `Past`} Games Found`}</span>;
           }
           const { months, monthGameCounts } = getMonthData(filtered);
           return (
