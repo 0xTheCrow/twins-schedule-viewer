@@ -10,13 +10,15 @@ export default function ScheduleCard({
   index,
   seriesPosition = "solo",
   borderColor,
+  isLive = false,
 }: {
   gameData: GameData;
   index: number;
   seriesPosition?: SeriesPosition;
   borderColor?: string;
+  isLive?: boolean;
 }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(isLive);
 
   const date = new Date(gameData.gameDate);
   const gameMonth = date.toLocaleDateString("en-US", { month: "short" });
@@ -47,12 +49,14 @@ export default function ScheduleCard({
     <div
       className={`flex cursor-pointer flex-col overflow-hidden bg-white text-sm
         text-gray-900 ${
-          seriesPosition === "solo"
-            ? `rounded-md border-2 shadow-md
-              ${borderColor || "border-gray-200"}`
-            : seriesPosition !== "last"
-              ? "border-b border-gray-200"
-              : ""
+          isLive
+            ? "rounded-md border-2 border-green-500 shadow-md shadow-green-500/20"
+            : seriesPosition === "solo"
+              ? `rounded-md border-2 shadow-md
+                ${borderColor || "border-gray-200"}`
+              : seriesPosition !== "last"
+                ? "border-b border-gray-200"
+                : ""
         }`}
       onClick={() => setIsExpanded(!isExpanded)}
     >
@@ -60,9 +64,17 @@ export default function ScheduleCard({
         <div
           className={`flex w-12 shrink-0 items-center justify-center
             self-stretch text-xs font-medium text-white md:w-16
-            ${isAway ? "bg-[#002B5C]" : "bg-[#D31145]"}`}
+            ${isLive ? "bg-green-600" : isAway ? "bg-[#002B5C]" : "bg-[#D31145]"}`}
         >
-          {isAway ? "Away" : "Home"}
+          {isLive ? (
+            <span className="flex items-center gap-1">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-white" />
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wide">Live</span>
+            </span>
+          ) : isAway ? "Away" : "Home"}
         </div>
         <div className={`flex-1 ${index % 2 === 1 ? "bg-gray-200" : ""}`}>
           <div className="flex items-center gap-2 px-3 py-2 md:hidden">
@@ -96,8 +108,8 @@ export default function ScheduleCard({
             />
           </div>
           <div
-            className={`hidden items-center gap-4 px-4 py-3 md:grid
-              ${hasScore ? "grid-cols-[1fr_8rem_auto_1rem]" : "grid-cols-[1fr_auto_1rem]"}`}
+            className="hidden grid-cols-[1fr_6rem_7rem_1rem] items-center gap-4
+              px-4 py-3 md:grid"
           >
             <div className="flex flex-col">
               <span className="text-base font-bold text-gray-900">
@@ -107,20 +119,22 @@ export default function ScheduleCard({
                 {gameData.venueName}
               </span>
             </div>
-            {hasScore && (
-              <div className="flex items-center gap-2.5">
-                <span
-                  className={`inline-flex size-9 items-center justify-center
-                  rounded-full text-sm font-bold text-white
-                  ${isWin ? "bg-green-600" : "bg-red-600"}`}
-                >
-                  {isWin ? "W" : "L"}
-                </span>
-                <span className="text-xl font-bold">
-                  {twinsScore}-{opponentScore}
-                </span>
-              </div>
-            )}
+            <div>
+              {hasScore && (
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className={`inline-flex size-9 items-center justify-center
+                    rounded-full text-sm font-bold text-white
+                    ${isWin ? "bg-green-600" : "bg-red-600"}`}
+                  >
+                    {isWin ? "W" : "L"}
+                  </span>
+                  <span className="text-xl font-bold">
+                    {twinsScore}-{opponentScore}
+                  </span>
+                </div>
+              )}
+            </div>
             <div className="flex flex-col items-end">
               <span className="text-sm font-semibold text-gray-900">
                 {gameDow}, {gameMonth} {gameDay}

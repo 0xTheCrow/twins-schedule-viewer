@@ -1,5 +1,7 @@
 const getSchedule = async () => {
-  const scheduleRoute = process.env.NEXT_PUBLIC_TWINS_2026_SCHEDULE_API_ROUTE;
+  const twinsId = process.env.NEXT_PUBLIC_TWINS_TEAM_ID;
+  const apiBase = process.env.NEXT_PUBLIC_MLB_STATS_API_BASE;
+  const scheduleRoute = `${apiBase}/v1/schedule?teamId=${twinsId}&sportId=1&gameType=REGULAR_SEASON&season=2026`;
   if (!scheduleRoute) {
     return {
       success: false,

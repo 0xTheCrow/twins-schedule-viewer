@@ -3,6 +3,7 @@
 import getSchedule from "@/api/getSchedule";
 import PageContent from "@/components/layout/PageContent";
 import GameList from "@/components/schedule/GameList";
+import ScheduleCard from "@/components/schedule/ScheduleCard";
 import ScheduleCardSkeleton from "@/components/schedule/ScheduleCardSkeleton";
 import HomeAwayFilter, {
   HomeAwayValue,
@@ -117,6 +118,13 @@ export default function Dashboard() {
   return (
     <PageContent>
       <div className={"flex w-full flex-col gap-4"}>
+        {dataMaps?.liveGame && (
+          <ScheduleCard
+            gameData={dataMaps.liveGame}
+            index={0}
+            isLive
+          />
+        )}
         <div
           className="flex flex-wrap items-center gap-3 rounded-lg border
             border-white/15 bg-white/10 px-4 py-3 backdrop-blur-sm"
