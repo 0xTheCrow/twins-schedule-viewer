@@ -16,7 +16,10 @@ export interface GameData {
     home: TeamData;
     away: TeamData;
   };
-  status?: { detailedState: string };
+  status?: { 
+    detailedState: string;
+    abstractGameCode: string;
+  };
   description?: string;
   seriesDescription?: string;
   seriesGameNumber?: number;
@@ -35,4 +38,5 @@ export interface ScheduleMaps {
   opponentMap: Map<number, TeamData>;
   pastGames: string[];
   upcomingGames: string[];
+  liveGame: GameData | undefined;
 }

@@ -15,7 +15,10 @@ export default function OpponentFilter({
   selectedOpponents,
   onChange,
 }: {
-  opponentMap: Map<number, { team: { id: number; name: string }; games: string[] }>;
+  opponentMap: Map<
+    number,
+    { team: { id: number; name: string }; games: string[] }
+  >;
   selectedOpponents: string[];
   onChange: (values: string[]) => void;
 }) {
@@ -37,23 +40,39 @@ export default function OpponentFilter({
       getItemLabel={(item) => item.label}
       getItemValue={(item) => item.value}
     >
-      <ComboboxChips ref={anchor} className="w-full border-white/20 bg-white/5 text-white/90 placeholder:text-white/40">
+      <ComboboxChips
+        ref={anchor}
+        className="w-full border-white/20 bg-white/5 text-white/90
+          placeholder:text-white/40"
+      >
         {selectedOpponents.map((id) => {
           const opponent = opponentMap.get(Number(id));
           return (
-            <ComboboxChip key={id} value={id} className="bg-white/15 text-white/90">
+            <ComboboxChip
+              key={id}
+              value={id}
+              className="bg-white/15 text-white/90"
+            >
               {opponent?.team.name}
             </ComboboxChip>
           );
         })}
-        <ComboboxChipsInput placeholder="Filter opponents..." className="text-white/90 placeholder:text-white/40" />
+        <ComboboxChipsInput
+          placeholder="Filter opponents..."
+          className="text-white/90 placeholder:text-white/40"
+        />
       </ComboboxChips>
       <ComboboxContent anchor={anchor} className="!w-auto !min-w-0">
-        <div className="p-1 border-b border-border">
+        <div className="border-border border-b p-1">
           <button
             type="button"
-            onMouseDown={(e) => { e.preventDefault(); onChange([]); }}
-            className="w-full text-left rounded-md px-1.5 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              onChange([]);
+            }}
+            className="text-muted-foreground hover:bg-accent
+              hover:text-accent-foreground w-full cursor-pointer rounded-md
+              px-1.5 py-1 text-left text-sm transition-colors"
           >
             Clear
           </button>

@@ -20,6 +20,6 @@ const getSchedule = async () => {
         data: undefined,
       };
     });
-}
+};
 
 export default getSchedule;

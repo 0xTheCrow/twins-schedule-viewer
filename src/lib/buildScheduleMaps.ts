@@ -1,10 +1,13 @@
 import { GameData, ScheduleMaps } from "@/types/schedule";
 
-export default function buildScheduleMaps(data: { dates: { games: GameData[] }[] }): ScheduleMaps {
+export default function buildScheduleMaps(rawData: {
+  dates: { games: GameData[] }[];
+}): ScheduleMaps {
   const twinsId = process.env.NEXT_PUBLIC_TWINS_TEAM_ID;
-  const dates = data.dates;
+  const dates = rawData.dates;
   const pastGames: string[] = [];
   const upcomingGames: string[] = [];
+  let liveGame: GameData | undefined = undefined;
   const gameMap = new Map();
   const opponentMap = new Map();
 
@@ -16,15 +19,19 @@ export default function buildScheduleMaps(data: { dates: { games: GameData[] }[]
       const awayTeam = gameObj.teams.away;
       const isAway = awayTeam.team.id === Number(twinsId);
       const opponent = isAway ? homeTeam : awayTeam;
-      const isDayGame = gameObj.dayNight === 'day';
+      const isDayGame = gameObj.dayNight === "day";
       const venueName = gameObj.venue.name;
 
       const gameDate = new Date(gameObj.gameDate);
       const nowDate = new Date();
-      if (nowDate < gameDate) {
-        upcomingGames.push(guid);
+      if (gameObj.status?.abstractGameCode === "L") {
+        liveGame = gameObj;
       } else {
-        pastGames.push(guid);
+        if (nowDate < gameDate) {
+          upcomingGames.push(guid);
+        } else {
+          pastGames.push(guid);
+        }
       }
 
       gameMap.set(guid, {
@@ -39,7 +46,7 @@ export default function buildScheduleMaps(data: { dates: { games: GameData[] }[]
       if (!opponentMap.has(opponent.team.id)) {
         opponentMap.set(opponent.team.id, {
           ...opponent,
-          games: [guid]
+          games: [guid],
         });
       } else {
         opponentMap.get(opponent.team.id)!.games.push(guid);
@@ -47,5 +54,5 @@ export default function buildScheduleMaps(data: { dates: { games: GameData[] }[]
     });
   });
 
-  return { gameMap, opponentMap, pastGames, upcomingGames };
+  return { gameMap, opponentMap, pastGames, upcomingGames, liveGame };
 }

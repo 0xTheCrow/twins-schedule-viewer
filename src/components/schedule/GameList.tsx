@@ -1,10 +1,23 @@
 import ScheduleCard from "@/components/schedule/ScheduleCard";
 import { GameData } from "@/types/schedule";
+import { ReactElement } from "react";
 
 export type SeriesPosition = "first" | "middle" | "last" | "solo";
 
-const monthNames = ["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"];
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 export default function GameList({
   gameIds,
@@ -59,7 +72,7 @@ export default function GameList({
       key={`month-${month}`}
       id={`month-${month}`}
       data-month={month}
-      className="flex items-center gap-3 scroll-mt-4"
+      className="flex scroll-mt-4 items-center gap-3"
     >
       <div className="flex-1 border-t border-white/20" />
       <span className="text-lg font-bold tracking-wide uppercase select-none">
@@ -72,9 +85,12 @@ export default function GameList({
   return (
     <>
       {groups.flatMap((group, groupIndex) => {
-        const elements: JSX.Element[] = [];
+        const elements: ReactElement[] = [];
         const firstGame = gameMap.get(group[0])!;
-        const borderColor = seriesIndices[groupIndex] % 2 === 0 ? "border-[#B9975B]" : "border-white";
+        const borderColor =
+          seriesIndices[groupIndex] % 2 === 0
+            ? "border-[#B9975B]"
+            : "border-white";
 
         if (group.length === 1) {
           if (firstGame.month !== lastMonth) {
@@ -85,11 +101,10 @@ export default function GameList({
             <ScheduleCard
               key={group[0]}
               gameData={firstGame}
-              gameId={group[0]}
               index={runningIndex++}
               seriesPosition="solo"
               borderColor={borderColor}
-            />
+            />,
           );
         } else {
           if (firstGame.month !== lastMonth) {
@@ -100,23 +115,27 @@ export default function GameList({
           elements.push(
             <div
               key={`series-${group[0]}`}
-              className={`rounded-md overflow-hidden shadow-md border-2 ${borderColor}`}
+              className={`overflow-hidden rounded-md border-2 shadow-md
+              ${borderColor}`}
             >
               {group.map((gameId, i) => {
                 const gameData = gameMap.get(gameId)!;
                 const position: SeriesPosition =
-                  i === 0 ? "first" : i === group.length - 1 ? "last" : "middle";
+                  i === 0
+                    ? "first"
+                    : i === group.length - 1
+                      ? "last"
+                      : "middle";
                 return (
                   <ScheduleCard
                     key={gameId}
                     gameData={gameData}
-                    gameId={gameId}
                     index={runningIndex++}
                     seriesPosition={position}
                   />
                 );
               })}
-            </div>
+            </div>,
           );
         }
 
