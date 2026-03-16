@@ -14,7 +14,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import buildScheduleMaps from "@/lib/buildScheduleMaps";
 import { ScheduleMaps } from "@/types/schedule";
 
-export default function Dashboard() {
+export default function ScheduleViewer() {
   const [dataMaps, setDataMaps] = useState<ScheduleMaps | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
