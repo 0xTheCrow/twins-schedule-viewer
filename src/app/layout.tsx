@@ -35,11 +35,11 @@ export default function RootLayout({
                 rounded-b-md px-3 py-2.5 text-white md:gap-4 md:px-6 md:py-6"
             >
               <div
-                className="flex size-10 items-center justify-center rounded-full
-                  bg-[#002B5C] p-1 md:size-24 md:p-2"
+                className="flex size-11 items-center justify-center rounded-full
+                  bg-[#002B5C] p-1 md:size-[6.5rem] md:p-2"
               >
                 <div
-                  className="flex size-full items-center justify-center
+                  className="flex size-full items-center justify-start
                     overflow-hidden rounded-full bg-white p-1 md:p-2.5"
                 >
                   <Image
@@ -51,15 +51,18 @@ export default function RootLayout({
                   />
                 </div>
               </div>
-              <div className="flex flex-col">
-                <h1 className="text-base font-bold tracking-tight md:text-2xl">
-                  Minnesota Twins
-                </h1>
+              <h1 className="text-base font-bold tracking-tight md:text-4xl">
+                Minnesota Twins
+              </h1>
+              <div className="ml-auto flex flex-col items-end">
+                <span className="text-2xl font-bold leading-tight tracking-tight md:text-5xl">
+                  2026
+                </span>
                 <span
-                  className="text-[10px] font-medium tracking-widest text-white/70
-                    uppercase md:text-sm"
+                  className="text-[8px] font-medium tracking-widest text-white/70
+                    uppercase md:text-xs"
                 >
-                  2026 Schedule
+                  Season Schedule
                 </span>
               </div>
             </header>

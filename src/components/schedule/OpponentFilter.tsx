@@ -42,7 +42,7 @@ export default function OpponentFilter({
     >
       <ComboboxChips
         ref={anchor}
-        className="w-full border-white/20 bg-white/5 text-white/90
+        className="w-full rounded-md border-white/20 bg-white/5 text-white/90
           placeholder:text-white/40"
       >
         {selectedOpponents.map((id) => {
@@ -51,14 +51,16 @@ export default function OpponentFilter({
             <ComboboxChip
               key={id}
               value={id}
-              className="bg-white/15 text-white/90"
+              className="bg-white/15 text-white/90
+                [&_[data-slot=combobox-chip-remove]]:hover:bg-white/20
+                [&_[data-slot=combobox-chip-remove]]:text-white/90"
             >
               {opponent?.team.name}
             </ComboboxChip>
           );
         })}
         <ComboboxChipsInput
-          placeholder="Filter opponents..."
+          placeholder={selectedOpponents.length === 0 ? "Select opponents" : ""}
           className="text-white/90 placeholder:text-white/40"
         />
       </ComboboxChips>
