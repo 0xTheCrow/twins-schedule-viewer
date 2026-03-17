@@ -47,13 +47,11 @@ export default function ScheduleViewer({
     }
   }, []);
 
-  const filteredGameIds = useMemo(() => {
-    if (!dataMaps) return [];
-    const games = isUpcomingToggleEnabled
-      ? dataMaps.upcomingGames
-      : dataMaps.pastGames;
+  const { filteredGameIds, pastCount, upcomingCount } = useMemo(() => {
+    if (!dataMaps)
+      return { filteredGameIds: [], pastCount: 0, upcomingCount: 0 };
 
-    return games.filter((gameId) => {
+    const passesFilter = (gameId: string) => {
       const gameData = dataMaps.gameMap.get(gameId);
       if (!gameData) return false;
       if (
@@ -64,7 +62,16 @@ export default function ScheduleViewer({
       if (homeAway === "home" && gameData.isAway) return false;
       if (homeAway === "away" && !gameData.isAway) return false;
       return true;
-    });
+    };
+
+    const filteredPast = dataMaps.pastGames.filter(passesFilter);
+    const filteredUpcoming = dataMaps.upcomingGames.filter(passesFilter);
+
+    return {
+      filteredGameIds: isUpcomingToggleEnabled ? filteredUpcoming : filteredPast,
+      pastCount: filteredPast.length,
+      upcomingCount: filteredUpcoming.length,
+    };
   }, [dataMaps, isUpcomingToggleEnabled, selectedOpponents, homeAway]);
 
   const { months, monthGameCounts } = useMemo(() => {
@@ -190,7 +197,7 @@ export default function ScheduleViewer({
                     : "bg-white/20 text-white/60"
                 }`}
               >
-                {dataMaps.pastGames.length}
+                {pastCount}
               </span>
             </button>
             <button
@@ -212,7 +219,7 @@ export default function ScheduleViewer({
                     : "bg-white/20 text-white/60"
                 }`}
               >
-                {dataMaps.upcomingGames.length}
+                {upcomingCount}
               </span>
             </button>
           </div>
