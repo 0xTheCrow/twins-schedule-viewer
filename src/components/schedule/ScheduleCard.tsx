@@ -82,7 +82,7 @@ export default function ScheduleCard({
               <span className="block truncate text-sm font-bold text-gray-900">
                 {isAway ? "@" : "vs"} {opponentName}
               </span>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-600">
                 <span>
                   {gameDow}, {gameMonth} {gameDay} · {gameTime}
                 </span>
@@ -90,15 +90,17 @@ export default function ScheduleCard({
             </div>
             {hasScore && (
               <div className="flex shrink-0 items-center gap-2">
-                <span
-                  className={`inline-flex size-8 items-center justify-center
-                  rounded-full text-sm font-bold text-white
-                  ${isWin ? "bg-green-600" : "bg-red-600"}`}
-                >
-                  {isWin ? "W" : "L"}
-                </span>
+                {!isLive && (
+                  <span
+                    className={`inline-flex size-8 items-center justify-center
+                    rounded-full text-sm font-bold text-white
+                    ${isWin ? "bg-green-600" : "bg-red-600"}`}
+                  >
+                    {isWin ? "W" : "L"}
+                  </span>
+                )}
                 <span className="text-lg font-bold">
-                  {twinsScore}-{opponentScore}
+                  {awayTeam.score ?? 0}-{homeTeam.score ?? 0}
                 </span>
               </div>
             )}
@@ -115,22 +117,24 @@ export default function ScheduleCard({
               <span className="text-base font-bold text-gray-900">
                 {isAway ? "@" : "vs"} {opponentName}
               </span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-600">
                 {gameData.venueName}
               </span>
             </div>
             <div>
               {hasScore && (
                 <div className="flex items-center gap-2.5">
-                  <span
-                    className={`inline-flex size-9 items-center justify-center
-                    rounded-full text-sm font-bold text-white
-                    ${isWin ? "bg-green-600" : "bg-red-600"}`}
-                  >
-                    {isWin ? "W" : "L"}
-                  </span>
+                  {!isLive && (
+                    <span
+                      className={`inline-flex size-9 items-center justify-center
+                      rounded-full text-sm font-bold text-white
+                      ${isWin ? "bg-green-600" : "bg-red-600"}`}
+                    >
+                      {isWin ? "W" : "L"}
+                    </span>
+                  )}
                   <span className="text-xl font-bold">
-                    {twinsScore}-{opponentScore}
+                    {awayTeam.score ?? 0}-{homeTeam.score ?? 0}
                   </span>
                 </div>
               )}
@@ -139,7 +143,7 @@ export default function ScheduleCard({
               <span className="text-sm font-semibold text-gray-900">
                 {gameDow}, {gameMonth} {gameDay}
               </span>
-              <span className="text-xs text-gray-400">{gameTime}</span>
+              <span className="text-xs text-gray-600">{gameTime}</span>
             </div>
             <ChevronDown
               className={`size-4 text-gray-500 transition-transform
@@ -162,7 +166,7 @@ export default function ScheduleCard({
                 <p className="text-sm font-semibold text-[#002B5C]">
                   {gameData.seriesDescription}
                   {gameData.seriesGameNumber && (
-                    <span className="font-normal text-gray-500">
+                    <span className="font-normal text-gray-600">
                       {" "}
                       — Game {gameData.seriesGameNumber}
                       {gameData.gamesInSeries
@@ -178,8 +182,9 @@ export default function ScheduleCard({
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-3 text-xs text-gray-500">
+            <div className="flex items-center gap-3 text-xs text-gray-600">
               <span>{status || "Scheduled"}</span>
+              <span className="text-base text-gray-500">·</span>
               <span className="flex items-center gap-1">
                 {gameData.isDayGame ? (
                   <Sun className="size-3 text-gray-900" />
@@ -193,39 +198,39 @@ export default function ScheduleCard({
               )}
             </div>
           </div>
-          <div className="px-4 py-3 md:px-8">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="px-4 pb-5 pt-3 md:px-8">
+            <div className="grid grid-cols-2 gap-4 text-center">
               {hasScore ? (
                 <>
                   <div>
-                    <p className="mb-1 text-xs text-gray-500">
+                    <p className="mb-1 text-xs text-gray-600">
                       {`${awayTeam.team.name}`}
                     </p>
-                    <p className="text-xl font-bold">{awayTeam.score}</p>
+                    <p className="text-4xl font-bold">{awayTeam.score}</p>
                   </div>
                   <div>
-                    <p className="mb-1 text-xs text-gray-500">
+                    <p className="mb-1 text-xs text-gray-600">
                       {`${homeTeam.team.name}`}
                     </p>
-                    <p className="text-xl font-bold">{homeTeam.score}</p>
+                    <p className="text-4xl font-bold">{homeTeam.score}</p>
                   </div>
                 </>
               ) : (
                 <>
                   <div>
-                    <p className="mb-1 text-xs text-gray-500">
-                      {`${awayTeam.team.name} Season Record`}
+                    <p className="mb-1 text-xs text-gray-600">
+                      {`${awayTeam.team.name} Record`}
                     </p>
-                    <p className="text-base font-semibold">
+                    <p className="text-2xl font-bold">
                       {awayTeam.leagueRecord?.wins}-
                       {awayTeam.leagueRecord?.losses}
                     </p>
                   </div>
                   <div>
-                    <p className="mb-1 text-xs text-gray-500">
-                      {`${homeTeam.team.name} Season Record`}
+                    <p className="mb-1 text-xs text-gray-600">
+                      {`${homeTeam.team.name} Record`}
                     </p>
-                    <p className="text-base font-semibold">
+                    <p className="text-2xl font-bold">
                       {homeTeam.leagueRecord?.wins}-
                       {homeTeam.leagueRecord?.losses}
                     </p>
@@ -234,15 +239,15 @@ export default function ScheduleCard({
               )}
             </div>
           </div>
-          <div className="flex flex-wrap gap-2 px-4 pb-4 md:px-8">
+          <div className="flex items-center justify-end gap-3 px-4 pb-3 md:px-8">
             <a
               href={gamedayUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center gap-1.5 rounded bg-[#002B5C]
-                px-3 py-1.5 text-xs font-medium text-white transition-colors
-                hover:bg-[#003d80]"
+              className="inline-flex items-center gap-1.5 rounded border
+                border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600
+                transition-colors hover:border-[#002B5C] hover:text-[#002B5C]"
             >
               MLB Gameday <ExternalLink className="size-3" />
             </a>
@@ -251,9 +256,9 @@ export default function ScheduleCard({
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center gap-1.5 rounded bg-[#002B5C]
-                px-3 py-1.5 text-xs font-medium text-white transition-colors
-                hover:bg-[#003d80]"
+              className="inline-flex items-center gap-1.5 rounded border
+                border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600
+                transition-colors hover:border-[#002B5C] hover:text-[#002B5C]"
             >
               Get Directions <MapPin className="size-3" />
             </a>
