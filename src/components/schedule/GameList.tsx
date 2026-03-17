@@ -77,7 +77,7 @@ export default function GameList({
     seriesIndices.push(seriesCounter);
   }
 
-  let lastMonth: number | undefined = undefined;
+  let lastMonth: number | null = null;
   let runningIndex = 0;
 
   return (

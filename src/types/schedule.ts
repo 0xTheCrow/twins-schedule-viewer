@@ -38,5 +38,5 @@ export interface ScheduleMaps {
   opponentMap: Map<number, TeamData>;
   pastGames: string[];
   upcomingGames: string[];
-  liveGame: GameData | undefined;
+  liveGame: GameData | null;
 }

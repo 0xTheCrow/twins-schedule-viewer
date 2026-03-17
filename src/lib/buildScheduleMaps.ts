@@ -7,7 +7,7 @@ export default function buildScheduleMaps(rawData: {
   const dates = rawData.dates;
   const pastGames: string[] = [];
   const upcomingGames: string[] = [];
-  let liveGame: GameData | undefined = undefined;
+  let liveGame: GameData | null = null;
   const gameMap = new Map();
   const opponentMap = new Map();
 
