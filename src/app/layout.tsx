@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
 import "./globals.css";
+import PageContent from "../components/layout/PageContent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,9 +67,9 @@ export default function RootLayout({
                 </span>
               </div>
             </header>
-            <main className="flex flex-1 flex-col text-white">
+            <PageContent>
               {children}
-            </main>
+            </PageContent>
           </div>
         </div>
       </body>

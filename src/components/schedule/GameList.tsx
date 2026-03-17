@@ -19,6 +19,21 @@ const monthNames = [
   "December",
 ];
 
+const monthDivider = (month: number) => (
+  <div
+    key={`month-${month}`}
+    id={`month-${month}`}
+    data-month={month}
+    className="flex scroll-mt-4 items-center gap-3"
+  >
+    <div className="flex-1 border-t border-white/20" />
+    <span className="text-lg font-bold tracking-wide uppercase select-none">
+      {monthNames[month]}
+    </span>
+    <div className="flex-1 border-t border-white/20" />
+  </div>
+);
+
 export default function GameList({
   gameIds,
   gameMap,
@@ -27,12 +42,11 @@ export default function GameList({
   gameMap: Map<string, GameData>;
 }) {
   if (gameIds.length === 0) {
-    return <span>No Games Found</span>;
+    return <></>;
   }
 
-  // Group consecutive games by opponent within the same month
-  const groups: string[][] = [];
-  let currentGroup: string[] = [];
+  const seriesGroups: string[][] = [];
+  let currentSeriesGroup: string[] = [];
   let currentOpponentId: number | null = null;
   let currentMonth: number | null = null;
 
@@ -41,21 +55,20 @@ export default function GameList({
     const opponentId = game.opponent.team.id;
 
     if (opponentId === currentOpponentId && game.month === currentMonth) {
-      currentGroup.push(gameId);
+      currentSeriesGroup.push(gameId);
     } else {
-      if (currentGroup.length > 0) groups.push(currentGroup);
-      currentGroup = [gameId];
+      if (currentSeriesGroup.length > 0) seriesGroups.push(currentSeriesGroup);
+      currentSeriesGroup = [gameId];
       currentOpponentId = opponentId;
       currentMonth = game.month;
     }
   }
-  if (currentGroup.length > 0) groups.push(currentGroup);
+  if (currentSeriesGroup.length > 0) seriesGroups.push(currentSeriesGroup);
 
-  // Assign a series index to each group — only increment when opponent changes
   const seriesIndices: number[] = [];
   let seriesCounter = 0;
   let prevOpponentId: number | null = null;
-  for (const group of groups) {
+  for (const group of seriesGroups) {
     const opponentId = gameMap.get(group[0])!.opponent.team.id;
     if (opponentId !== prevOpponentId) {
       seriesCounter++;
@@ -67,24 +80,9 @@ export default function GameList({
   let lastMonth: number | undefined = undefined;
   let runningIndex = 0;
 
-  const monthDivider = (month: number) => (
-    <div
-      key={`month-${month}`}
-      id={`month-${month}`}
-      data-month={month}
-      className="flex scroll-mt-4 items-center gap-3"
-    >
-      <div className="flex-1 border-t border-white/20" />
-      <span className="text-lg font-bold tracking-wide uppercase select-none">
-        {monthNames[month]}
-      </span>
-      <div className="flex-1 border-t border-white/20" />
-    </div>
-  );
-
   return (
     <>
-      {groups.flatMap((group, groupIndex) => {
+      {seriesGroups.flatMap((group, groupIndex) => {
         const elements: ReactElement[] = [];
         const firstGame = gameMap.get(group[0])!;
         const borderColor =
@@ -92,11 +90,12 @@ export default function GameList({
             ? "border-[#B9975B]"
             : "border-white";
 
+        if (firstGame.month !== lastMonth) {
+          lastMonth = firstGame.month;
+          elements.push(monthDivider(firstGame.month));
+        }
+
         if (group.length === 1) {
-          if (firstGame.month !== lastMonth) {
-            lastMonth = firstGame.month;
-            elements.push(monthDivider(firstGame.month));
-          }
           elements.push(
             <ScheduleCard
               key={group[0]}
@@ -107,11 +106,6 @@ export default function GameList({
             />,
           );
         } else {
-          if (firstGame.month !== lastMonth) {
-            lastMonth = firstGame.month;
-            elements.push(monthDivider(firstGame.month));
-          }
-
           elements.push(
             <div
               key={`series-${group[0]}`}

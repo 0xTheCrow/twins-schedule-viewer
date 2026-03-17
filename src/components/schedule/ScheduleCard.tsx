@@ -35,7 +35,6 @@ export default function ScheduleCard({
   const awayTeam = gameData.teams.away;
   const status = gameData.status?.detailedState;
   const hasScore = status === "Final" || status === "In Progress";
-  const isDoubleHeader = gameData.doubleHeader && gameData.doubleHeader !== "N";
   const gamedayUrl = `https://www.mlb.com/gameday/${gameData.gamePk}`;
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(gameData.venueName)}`;
 
@@ -168,7 +167,7 @@ export default function ScheduleCard({
                   {gameData.seriesGameNumber && (
                     <span className="font-normal text-gray-600">
                       {" "}
-                      — Game {gameData.seriesGameNumber}
+                      - Game {gameData.seriesGameNumber}
                       {gameData.gamesInSeries
                         ? ` of ${gameData.gamesInSeries}`
                         : ""}
@@ -193,9 +192,6 @@ export default function ScheduleCard({
                 )}
                 {gameData.isDayGame ? "Day Game" : "Night Game"}
               </span>
-              {isDoubleHeader && (
-                <span>DH - Game {gameData.gameNumber || 1}</span>
-              )}
             </div>
           </div>
           <div className="px-4 pb-5 pt-3 md:px-8">

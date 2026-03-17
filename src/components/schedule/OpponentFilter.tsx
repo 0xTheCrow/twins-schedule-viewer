@@ -37,8 +37,8 @@ export default function OpponentFilter({
       multiple
       value={selectedOpponents}
       onValueChange={onChange}
-      getItemLabel={(item) => item.label}
-      getItemValue={(item) => item.value}
+      getItemLabel={(item: { label: string; value: string;}) => item.label}
+      getItemValue={(item: { label: string; value: string;}) => item.value}
     >
       <ComboboxChips
         ref={anchor}

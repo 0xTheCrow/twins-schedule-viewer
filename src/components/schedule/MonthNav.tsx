@@ -25,7 +25,7 @@ export default function MonthNav({
   onMonthClick: (month: number, index: number) => void;
 }) {
   return (
-    <div className="sticky top-2 flex flex-col gap-1 self-start md:top-60">
+    <div className="sticky top-2 flex flex-col gap-1 self-start md:top-64">
       {months.map((month, i) => (
         <button
           key={month}

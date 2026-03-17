@@ -13,12 +13,12 @@ async function getScheduleData() {
   return res.json();
 }
 
-async function refreshSchedule() {
+async function refreshScheduleAction() {
   "use server";
   revalidatePath("/");
 }
 
 export default async function Home() {
   const data = await getScheduleData();
-  return <ScheduleViewer initialData={data} refreshSchedule={refreshSchedule} />;
+  return <ScheduleViewer rawData={data} refreshScheduleAction={refreshScheduleAction} />;
 }

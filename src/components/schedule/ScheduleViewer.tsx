@@ -1,6 +1,5 @@
 "use client";
 
-import PageContent from "@/components/layout/PageContent";
 import GameList from "@/components/schedule/GameList";
 import ScheduleCard from "@/components/schedule/ScheduleCard";
 import HomeAwayFilter, {
@@ -13,15 +12,15 @@ import buildScheduleMaps from "@/lib/buildScheduleMaps";
 import { GameData } from "@/types/schedule";
 
 export default function ScheduleViewer({
-  initialData,
-  refreshSchedule,
+  rawData,
+  refreshScheduleAction,
 }: {
-  initialData: { dates: { games: GameData[] }[] } | null;
-  refreshSchedule: () => Promise<void>;
+  rawData: { dates: { games: GameData[] }[] } | null;
+  refreshScheduleAction: () => Promise<void>;
 }) {
   const dataMaps = useMemo(
-    () => (initialData ? buildScheduleMaps(initialData) : null),
-    [initialData],
+    () => (rawData ? buildScheduleMaps(rawData) : null),
+    [rawData],
   );
 
   const [isUpcomingToggleEnabled, setIsUpcomingToggleEnabled] =
@@ -107,7 +106,7 @@ export default function ScheduleViewer({
           closest = el;
         }
       });
-      if (closest) {
+      if (closest !== null) {
         setActiveMonth(Number(closest.getAttribute("data-month")));
       }
     };
@@ -131,121 +130,117 @@ export default function ScheduleViewer({
 
   if (!dataMaps) {
     return (
-      <PageContent>
-        <div className="flex w-full min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
-          <p className="text-lg font-semibold text-white">
-            Failed to load schedule data
-          </p>
-          <form action={refreshSchedule}>
-            <button
-              type="submit"
-              className="cursor-pointer rounded-md bg-white px-4 py-2 text-sm
-                font-medium text-[#002B5C] transition-colors hover:bg-white/90"
-            >
-              Retry
-            </button>
-          </form>
-        </div>
-      </PageContent>
+      <div className="flex w-full min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
+        <p className="text-lg font-semibold text-white">
+          Failed to load schedule data
+        </p>
+        <form action={refreshScheduleAction}>
+          <button
+            type="submit"
+            className="cursor-pointer rounded-md bg-white px-4 py-2 text-sm
+              font-medium text-[#002B5C] transition-colors hover:bg-white/90"
+          >
+            Retry
+          </button>
+        </form>
+      </div>
     );
   }
 
   return (
-    <PageContent>
-      <div className={"flex w-full flex-col gap-4"}>
-        {dataMaps.liveGame && (
-          <ScheduleCard
-            gameData={dataMaps.liveGame}
-            index={0}
-            isLive
+    <div className={"flex w-full flex-col gap-4"}>
+      {dataMaps.liveGame && (
+        <ScheduleCard
+          gameData={dataMaps.liveGame}
+          index={0}
+          isLive
+        />
+      )}
+      <div
+        className="flex flex-wrap items-center gap-3 rounded-lg border
+          border-white/15 bg-white/10 px-4 py-3 backdrop-blur-sm"
+      >
+        <div className="min-w-0 flex-1">
+          <OpponentFilter
+            opponentMap={dataMaps.opponentMap}
+            selectedOpponents={selectedOpponents}
+            onChange={setSelectedOpponents}
           />
-        )}
-        <div
-          className="flex flex-wrap items-center gap-3 rounded-lg border
-            border-white/15 bg-white/10 px-4 py-3 backdrop-blur-sm"
-        >
-          <div className="min-w-0 flex-1">
-            <OpponentFilter
-              opponentMap={dataMaps.opponentMap}
-              selectedOpponents={selectedOpponents}
-              onChange={setSelectedOpponents}
-            />
-          </div>
-          <div className="h-6 w-px bg-white/20" />
-          <HomeAwayFilter value={homeAway} onChange={setHomeAway} />
-          <div className="h-6 w-px bg-white/20" />
-          <div
-            className="flex rounded-md bg-white/10 p-0.5 text-sm font-medium
-              select-none"
-          >
-            <button
-              type="button"
-              onClick={() => setIsUpcomingToggleEnabled(false)}
-              className={`flex cursor-pointer items-center justify-center
-                gap-1.5 rounded-md px-3 py-1 transition-all duration-200 ${
-                  !isUpcomingToggleEnabled
-                    ? "bg-white text-[#002B5C] shadow-sm"
-                    : "text-white/60 hover:text-white/80"
-                }`}
-            >
-              Past
-              <span
-                className={`inline-flex h-5 min-w-5 items-center
-                justify-center rounded-full px-1 text-[10px] font-medium ${
-                  !isUpcomingToggleEnabled
-                    ? "bg-[#002B5C]/20 text-[#002B5C]"
-                    : "bg-white/20 text-white/60"
-                }`}
-              >
-                {pastCount}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsUpcomingToggleEnabled(true)}
-              className={`flex cursor-pointer items-center justify-center
-                gap-1.5 rounded-md px-3 py-1 transition-all duration-200 ${
-                  isUpcomingToggleEnabled
-                    ? "bg-white text-[#002B5C] shadow-sm"
-                    : "text-white/60 hover:text-white/80"
-                }`}
-            >
-              Upcoming
-              <span
-                className={`inline-flex h-5 min-w-5 items-center
-                justify-center rounded-full px-1 text-[10px] font-medium ${
-                  isUpcomingToggleEnabled
-                    ? "bg-[#002B5C]/20 text-[#002B5C]"
-                    : "bg-white/20 text-white/60"
-                }`}
-              >
-                {upcomingCount}
-              </span>
-            </button>
-          </div>
         </div>
-        {filteredGameIds.length === 0 ? (
-          <p className="pt-8 text-center text-white/60">
-            {`No ${isUpcomingToggleEnabled ? "upcoming" : "past"} games found`}
-          </p>
-        ) : (
-          <div className="relative flex gap-4">
-            <div className="flex flex-1 flex-col gap-2">
-              <GameList gameIds={filteredGameIds} gameMap={dataMaps.gameMap} />
-            </div>
-            <MonthNav
-              months={months}
-              monthGameCounts={monthGameCounts}
-              activeMonth={activeMonth}
-              onMonthClick={(month, i) =>
-                i === 0
-                  ? window.scrollTo({ top: 0, behavior: "smooth" })
-                  : scrollToMonth(month)
-              }
-            />
-          </div>
-        )}
+        <div className="h-6 w-px bg-white/20" />
+        <HomeAwayFilter value={homeAway} onChange={setHomeAway} />
+        <div className="h-6 w-px bg-white/20" />
+        <div
+          className="flex rounded-md bg-white/10 p-0.5 text-sm font-medium
+            select-none"
+        >
+          <button
+            type="button"
+            onClick={() => setIsUpcomingToggleEnabled(false)}
+            className={`flex cursor-pointer items-center justify-center
+              gap-1.5 rounded-md px-3 py-1 transition-all duration-200 ${
+                !isUpcomingToggleEnabled
+                  ? "bg-white text-[#002B5C] shadow-sm"
+                  : "text-white/60 hover:text-white/80"
+              }`}
+          >
+            Past
+            <span
+              className={`inline-flex h-5 min-w-5 items-center
+              justify-center rounded-full px-1 text-[10px] font-medium ${
+                !isUpcomingToggleEnabled
+                  ? "bg-[#002B5C]/20 text-[#002B5C]"
+                  : "bg-white/20 text-white/60"
+              }`}
+            >
+              {pastCount}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsUpcomingToggleEnabled(true)}
+            className={`flex cursor-pointer items-center justify-center
+              gap-1.5 rounded-md px-3 py-1 transition-all duration-200 ${
+                isUpcomingToggleEnabled
+                  ? "bg-white text-[#002B5C] shadow-sm"
+                  : "text-white/60 hover:text-white/80"
+              }`}
+          >
+            Upcoming
+            <span
+              className={`inline-flex h-5 min-w-5 items-center
+              justify-center rounded-full px-1 text-[10px] font-medium ${
+                isUpcomingToggleEnabled
+                  ? "bg-[#002B5C]/20 text-[#002B5C]"
+                  : "bg-white/20 text-white/60"
+              }`}
+            >
+              {upcomingCount}
+            </span>
+          </button>
+        </div>
       </div>
-    </PageContent>
+      {filteredGameIds.length === 0 ? (
+        <p className="pt-8 text-center text-white/60">
+          {`No ${isUpcomingToggleEnabled ? "upcoming" : "past"} games found`}
+        </p>
+      ) : (
+        <div className="relative flex gap-4">
+          <div className="flex flex-1 flex-col gap-2">
+            <GameList gameIds={filteredGameIds} gameMap={dataMaps.gameMap} />
+          </div>
+          <MonthNav
+            months={months}
+            monthGameCounts={monthGameCounts}
+            activeMonth={activeMonth}
+            onMonthClick={(month, i) =>
+              i === 0
+                ? window.scrollTo({ top: 0, behavior: "smooth" })
+                : scrollToMonth(month)
+            }
+          />
+        </div>
+      )}
+    </div>
   );
 }
