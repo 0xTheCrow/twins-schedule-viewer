@@ -276,6 +276,7 @@ function ComboboxChip({
   showRemove = true,
   ...props
 }: ComboboxPrimitive.Chip.Props & {
+  value?: string;
   showRemove?: boolean;
 }) {
   return (
@@ -310,7 +311,7 @@ function ComboboxChipsInput({
   onKeyDown,
   ...props
 }: ComboboxPrimitive.Input.Props) {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown: ComboboxPrimitive.Input.Props["onKeyDown"] = (e) => {
     if (e.key === "Tab") {
       e.preventDefault();
       const key = e.shiftKey ? "ArrowUp" : "ArrowDown";

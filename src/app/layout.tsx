@@ -29,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="bg-background flex min-h-screen justify-center font-sans">
+        <div
+          className="bg-background flex min-h-screen justify-center font-sans"
+        >
           <div className="mx-auto flex w-full max-w-4xl flex-col">
             <header
               className="bg-background-secondary flex w-full items-center gap-2
@@ -56,20 +58,21 @@ export default function RootLayout({
                 Minnesota Twins
               </h1>
               <div className="ml-auto flex flex-col items-end">
-                <span className="text-2xl font-bold leading-tight tracking-tight md:text-5xl">
+                <span
+                  className="text-2xl leading-tight font-bold tracking-tight
+                    md:text-5xl"
+                >
                   2026
                 </span>
                 <span
-                  className="text-[8px] font-medium tracking-widest text-white/70
-                    uppercase md:text-xs"
+                  className="text-[8px] font-medium tracking-widest
+                    text-white/70 uppercase md:text-xs"
                 >
                   Season Schedule
                 </span>
               </div>
             </header>
-            <PageContent>
-              {children}
-            </PageContent>
+            <PageContent>{children}</PageContent>
           </div>
         </div>
       </body>

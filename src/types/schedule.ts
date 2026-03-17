@@ -2,8 +2,11 @@ export interface TeamData {
   team: { id: number; name: string };
   score?: number;
   leagueRecord?: { wins: number; losses: number };
-  games?: string[];
   [key: string]: unknown;
+}
+
+export interface TeamDataWithGames extends TeamData {
+  games: string[];
 }
 
 export interface GameData {
@@ -16,7 +19,7 @@ export interface GameData {
     home: TeamData;
     away: TeamData;
   };
-  status?: { 
+  status?: {
     detailedState: string;
     abstractGameCode: string;
   };
@@ -25,7 +28,7 @@ export interface GameData {
   seriesGameNumber?: number;
   gamesInSeries?: number;
   doubleHeader?: string;
-  opponent: TeamData;
+  opponent: TeamDataWithGames;
   isAway: boolean;
   isDayGame: boolean;
   month: number;
@@ -35,7 +38,7 @@ export interface GameData {
 
 export interface ScheduleMaps {
   gameMap: Map<string, GameData>;
-  opponentMap: Map<number, TeamData>;
+  opponentMap: Map<number, TeamDataWithGames>;
   pastGames: string[];
   upcomingGames: string[];
   liveGame: GameData | null;

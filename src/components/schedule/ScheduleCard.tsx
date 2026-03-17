@@ -49,7 +49,8 @@ export default function ScheduleCard({
       className={`flex cursor-pointer flex-col overflow-hidden bg-white text-sm
         text-gray-900 ${
           isLive
-            ? "rounded-md border-2 border-green-500 shadow-md shadow-green-500/20"
+            ? `rounded-md border-2 border-green-500 shadow-md
+              shadow-green-500/20`
             : seriesPosition === "solo"
               ? `rounded-md border-2 shadow-md
                 ${borderColor || "border-gray-200"}`
@@ -68,12 +69,23 @@ export default function ScheduleCard({
           {isLive ? (
             <span className="flex items-center gap-1">
               <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-white opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-white" />
+                <span
+                  className="absolute inline-flex size-full animate-ping
+                    rounded-full bg-white opacity-75"
+                />
+                <span
+                  className="relative inline-flex size-2 rounded-full bg-white"
+                />
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-wide">Live</span>
+              <span className="text-[10px] font-bold tracking-wide uppercase">
+                Live
+              </span>
             </span>
-          ) : isAway ? "Away" : "Home"}
+          ) : isAway ? (
+            "Away"
+          ) : (
+            "Home"
+          )}
         </div>
         <div className={`flex-1 ${index % 2 === 1 ? "bg-gray-200" : ""}`}>
           <div className="flex items-center gap-2 px-3 py-2 md:hidden">
@@ -194,7 +206,7 @@ export default function ScheduleCard({
               </span>
             </div>
           </div>
-          <div className="px-4 pb-5 pt-3 md:px-8">
+          <div className="px-4 pt-3 pb-5 md:px-8">
             <div className="grid grid-cols-2 gap-4 text-center">
               {hasScore ? (
                 <>
@@ -240,7 +252,6 @@ export default function ScheduleCard({
               href={gamedayUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1.5 rounded border
                 border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600
                 transition-colors hover:border-[#002B5C] hover:text-[#002B5C]"
@@ -251,7 +262,6 @@ export default function ScheduleCard({
               href={directionsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1.5 rounded border
                 border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600
                 transition-colors hover:border-[#002B5C] hover:text-[#002B5C]"

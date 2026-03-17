@@ -9,16 +9,14 @@ import {
   ComboboxList,
   useComboboxAnchor,
 } from "@/components/ui/combobox";
+import { TeamDataWithGames } from "@/types/schedule";
 
 export default function OpponentFilter({
   opponentMap,
   selectedOpponents,
   onChange,
 }: {
-  opponentMap: Map<
-    number,
-    { team: { id: number; name: string }; games: string[] }
-  >;
+  opponentMap: Map<number, TeamDataWithGames>;
   selectedOpponents: string[];
   onChange: (values: string[]) => void;
 }) {
@@ -37,8 +35,6 @@ export default function OpponentFilter({
       multiple
       value={selectedOpponents}
       onValueChange={onChange}
-      getItemLabel={(item: { label: string; value: string;}) => item.label}
-      getItemValue={(item: { label: string; value: string;}) => item.value}
     >
       <ComboboxChips
         ref={anchor}
@@ -52,8 +48,8 @@ export default function OpponentFilter({
               key={id}
               value={id}
               className="bg-white/15 text-white/90
-                [&_[data-slot=combobox-chip-remove]]:hover:bg-white/20
-                [&_[data-slot=combobox-chip-remove]]:text-white/90"
+                [&_[data-slot=combobox-chip-remove]]:text-white/90
+                [&_[data-slot=combobox-chip-remove]]:hover:bg-white/20"
             >
               {opponent?.team.name}
             </ComboboxChip>

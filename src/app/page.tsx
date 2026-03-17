@@ -20,5 +20,10 @@ async function refreshScheduleAction() {
 
 export default async function Home() {
   const data = await getScheduleData();
-  return <ScheduleViewer rawData={data} refreshScheduleAction={refreshScheduleAction} />;
+  return (
+    <ScheduleViewer
+      rawData={data}
+      refreshScheduleAction={refreshScheduleAction}
+    />
+  );
 }

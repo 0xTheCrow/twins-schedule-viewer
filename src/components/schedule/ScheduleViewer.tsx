@@ -18,11 +18,6 @@ export default function ScheduleViewer({
   rawData: { dates: { games: GameData[] }[] } | null;
   refreshScheduleAction: () => Promise<void>;
 }) {
-  const dataMaps = useMemo(
-    () => (rawData ? buildScheduleMaps(rawData) : null),
-    [rawData],
-  );
-
   const [isUpcomingToggleEnabled, setIsUpcomingToggleEnabled] =
     useState<boolean>(true);
   const [selectedOpponents, setSelectedOpponents] = useState<string[]>([]);
@@ -33,11 +28,11 @@ export default function ScheduleViewer({
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const scrollToMonth = useCallback((month: number) => {
-    const el = document.getElementById(`month-${month}`);
-    if (el) {
+    const monthDividerElement = document.getElementById(`month-${month}`);
+    if (monthDividerElement) {
       isScrollingRef.current = true;
       setActiveMonth(month);
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      monthDividerElement.scrollIntoView({ behavior: "smooth", block: "start" });
 
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
       scrollTimeoutRef.current = setTimeout(() => {
@@ -46,50 +41,62 @@ export default function ScheduleViewer({
     }
   }, []);
 
-  const { filteredGameIds, pastCount, upcomingCount } = useMemo(() => {
-    if (!dataMaps)
-      return { filteredGameIds: [], pastCount: 0, upcomingCount: 0 };
+  const dataMaps = useMemo(
+    () => (rawData ? buildScheduleMaps(rawData) : null),
+    [rawData],
+  );
 
-    const passesFilter = (gameId: string) => {
-      const gameData = dataMaps.gameMap.get(gameId);
-      if (!gameData) return false;
-      if (
-        selectedOpponents.length > 0 &&
-        !selectedOpponents.includes(String(gameData.opponent.team.id))
-      )
-        return false;
-      if (homeAway === "home" && gameData.isAway) return false;
-      if (homeAway === "away" && !gameData.isAway) return false;
-      return true;
-    };
+  const { filteredGameIds, pastCount, upcomingCount, months, monthGameCounts } =
+    useMemo(() => {
+      if (!dataMaps)
+        return {
+          filteredGameIds: [],
+          pastCount: 0,
+          upcomingCount: 0,
+          months: [],
+          monthGameCounts: {},
+        };
 
-    const filteredPast = dataMaps.pastGames.filter(passesFilter);
-    const filteredUpcoming = dataMaps.upcomingGames.filter(passesFilter);
+      const passesFilter = (gameId: string) => {
+        const gameData = dataMaps.gameMap.get(gameId);
+        if (!gameData) return false;
+        if (
+          selectedOpponents.length > 0 &&
+          !selectedOpponents.includes(String(gameData.opponent.team.id))
+        )
+          return false;
+        if (homeAway === "home" && gameData.isAway) return false;
+        if (homeAway === "away" && !gameData.isAway) return false;
+        return true;
+      };
 
-    return {
-      filteredGameIds: isUpcomingToggleEnabled ? filteredUpcoming : filteredPast,
-      pastCount: filteredPast.length,
-      upcomingCount: filteredUpcoming.length,
-    };
-  }, [dataMaps, isUpcomingToggleEnabled, selectedOpponents, homeAway]);
+      const filteredPast = dataMaps.pastGames.filter(passesFilter);
+      const filteredUpcoming = dataMaps.upcomingGames.filter(passesFilter);
+      const filteredGameIds = isUpcomingToggleEnabled
+        ? filteredUpcoming
+        : filteredPast;
 
-  const { months, monthGameCounts } = useMemo(() => {
-    const months: number[] = [];
-    const monthGameCounts: Record<number, number> = {};
-    const seen = new Set<number>();
-
-    filteredGameIds.forEach((gameId) => {
-      const gameData = dataMaps!.gameMap.get(gameId)!;
-      monthGameCounts[gameData.month] =
-        (monthGameCounts[gameData.month] || 0) + 1;
-      if (!seen.has(gameData.month)) {
-        seen.add(gameData.month);
-        months.push(gameData.month);
+      const months: number[] = [];
+      const monthGameCounts: Record<number, number> = {};
+      const seen = new Set<number>();
+      for (const gameId of filteredGameIds) {
+        const gameData = dataMaps.gameMap.get(gameId)!;
+        monthGameCounts[gameData.month] =
+          (monthGameCounts[gameData.month] || 0) + 1;
+        if (!seen.has(gameData.month)) {
+          seen.add(gameData.month);
+          months.push(gameData.month);
+        }
       }
-    });
 
-    return { months, monthGameCounts };
-  }, [filteredGameIds, dataMaps]);
+      return {
+        filteredGameIds,
+        pastCount: filteredPast.length,
+        upcomingCount: filteredUpcoming.length,
+        months,
+        monthGameCounts,
+      };
+    }, [dataMaps, isUpcomingToggleEnabled, selectedOpponents, homeAway]);
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -106,8 +113,8 @@ export default function ScheduleViewer({
           closest = el;
         }
       });
-      if (closest !== null) {
-        setActiveMonth(Number(closest.getAttribute("data-month")));
+      if (closest) {
+        setActiveMonth(Number((closest as Element).getAttribute("data-month")));
       }
     };
 
@@ -130,7 +137,10 @@ export default function ScheduleViewer({
 
   if (!dataMaps) {
     return (
-      <div className="flex w-full min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
+      <div
+        className="flex min-h-[60vh] w-full flex-col items-center justify-center
+          gap-4 text-center"
+      >
         <p className="text-lg font-semibold text-white">
           Failed to load schedule data
         </p>
@@ -150,74 +160,73 @@ export default function ScheduleViewer({
   return (
     <div className={"flex w-full flex-col gap-4"}>
       {dataMaps.liveGame && (
-        <ScheduleCard
-          gameData={dataMaps.liveGame}
-          index={0}
-          isLive
-        />
+        <ScheduleCard gameData={dataMaps.liveGame} index={0} isLive />
       )}
       <div
-        className="flex flex-wrap items-center gap-3 rounded-lg border
-          border-white/15 bg-white/10 px-4 py-3 backdrop-blur-sm"
+        className="flex flex-col gap-3 rounded-lg border border-white/15
+          bg-white/10 px-4 py-3 backdrop-blur-sm sm:flex-row sm:flex-wrap
+          sm:items-center"
       >
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 sm:flex-1">
           <OpponentFilter
             opponentMap={dataMaps.opponentMap}
             selectedOpponents={selectedOpponents}
             onChange={setSelectedOpponents}
           />
         </div>
-        <div className="h-6 w-px bg-white/20" />
-        <HomeAwayFilter value={homeAway} onChange={setHomeAway} />
-        <div className="h-6 w-px bg-white/20" />
-        <div
-          className="flex rounded-md bg-white/10 p-0.5 text-sm font-medium
-            select-none"
-        >
-          <button
-            type="button"
-            onClick={() => setIsUpcomingToggleEnabled(false)}
-            className={`flex cursor-pointer items-center justify-center
-              gap-1.5 rounded-md px-3 py-1 transition-all duration-200 ${
-                !isUpcomingToggleEnabled
-                  ? "bg-white text-[#002B5C] shadow-sm"
-                  : "text-white/60 hover:text-white/80"
-              }`}
+        <div className="hidden h-6 w-px bg-white/20 sm:block" />
+        <div className="flex items-center gap-3">
+          <HomeAwayFilter value={homeAway} onChange={setHomeAway} />
+          <div className="h-6 w-px bg-white/20" />
+          <div
+            className="flex rounded-md bg-white/10 p-0.5 text-sm font-medium
+              select-none"
           >
-            Past
-            <span
-              className={`inline-flex h-5 min-w-5 items-center
-              justify-center rounded-full px-1 text-[10px] font-medium ${
-                !isUpcomingToggleEnabled
-                  ? "bg-[#002B5C]/20 text-[#002B5C]"
-                  : "bg-white/20 text-white/60"
-              }`}
+            <button
+              type="button"
+              onClick={() => setIsUpcomingToggleEnabled(false)}
+              className={`flex cursor-pointer items-center justify-center
+                gap-1.5 rounded-md px-3 py-1 transition-all duration-200 ${
+                  !isUpcomingToggleEnabled
+                    ? "bg-white text-[#002B5C] shadow-sm"
+                    : "text-white/60 hover:text-white/80"
+                }`}
             >
-              {pastCount}
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsUpcomingToggleEnabled(true)}
-            className={`flex cursor-pointer items-center justify-center
-              gap-1.5 rounded-md px-3 py-1 transition-all duration-200 ${
-                isUpcomingToggleEnabled
-                  ? "bg-white text-[#002B5C] shadow-sm"
-                  : "text-white/60 hover:text-white/80"
-              }`}
-          >
-            Upcoming
-            <span
-              className={`inline-flex h-5 min-w-5 items-center
-              justify-center rounded-full px-1 text-[10px] font-medium ${
-                isUpcomingToggleEnabled
-                  ? "bg-[#002B5C]/20 text-[#002B5C]"
-                  : "bg-white/20 text-white/60"
-              }`}
+              Past
+              <span
+                className={`inline-flex h-5 min-w-5 items-center justify-center
+                  rounded-full px-1 text-[10px] font-medium ${
+                    !isUpcomingToggleEnabled
+                      ? "bg-[#002B5C]/20 text-[#002B5C]"
+                      : "bg-white/20 text-white/60"
+                  }`}
+              >
+                {pastCount}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsUpcomingToggleEnabled(true)}
+              className={`flex cursor-pointer items-center justify-center
+                gap-1.5 rounded-md px-3 py-1 transition-all duration-200 ${
+                  isUpcomingToggleEnabled
+                    ? "bg-white text-[#002B5C] shadow-sm"
+                    : "text-white/60 hover:text-white/80"
+                }`}
             >
-              {upcomingCount}
-            </span>
-          </button>
+              Upcoming
+              <span
+                className={`inline-flex h-5 min-w-5 items-center justify-center
+                  rounded-full px-1 text-[10px] font-medium ${
+                    isUpcomingToggleEnabled
+                      ? "bg-[#002B5C]/20 text-[#002B5C]"
+                      : "bg-white/20 text-white/60"
+                  }`}
+              >
+                {upcomingCount}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
       {filteredGameIds.length === 0 ? (
