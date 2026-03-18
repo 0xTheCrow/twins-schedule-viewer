@@ -8,9 +8,16 @@ async function getScheduleData() {
   const apiBase = process.env.NEXT_PUBLIC_MLB_STATS_API_BASE;
   const url = `${apiBase}/v1/schedule?teamId=${teamId}&sportId=1&gameType=REGULAR_SEASON&season=2026`;
 
-  const res = await fetch(url, { next: { revalidate: REVALIDATE_SECONDS } });
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch(url, { next: { revalidate: REVALIDATE_SECONDS } });
+    if (!res.ok) { 
+      return null;
+    } else {
+      return res.json();
+    }
+  } catch {
+    return null;
+  }
 }
 
 async function refreshScheduleAction() {
