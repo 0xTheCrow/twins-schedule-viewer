@@ -21,7 +21,7 @@ export default function ScheduleViewer({
   const [isUpcomingToggleEnabled, setIsUpcomingToggleEnabled] =
     useState<boolean>(true);
   const [selectedOpponents, setSelectedOpponents] = useState<string[]>([]);
-  const [homeAway, setHomeAway] = useState<HomeAwayValue>("all");
+  const [homeAwaySetting, setHomeAwaySetting] = useState<HomeAwayValue>("all");
   const [activeMonth, setActiveMonth] = useState<number | null>(null);
 
   const isScrollingRef = useRef(false);
@@ -71,8 +71,8 @@ export default function ScheduleViewer({
         !selectedOpponents.includes(String(gameData.opponent.team.id))
       )
         return false;
-      if (homeAway === "home" && gameData.isAway) return false;
-      if (homeAway === "away" && !gameData.isAway) return false;
+      if (homeAwaySetting === "home" && gameData.isAway) return false;
+      if (homeAwaySetting === "away" && !gameData.isAway) return false;
       return true;
     }
 
@@ -96,7 +96,7 @@ export default function ScheduleViewer({
       monthsWithGames,
       monthGameCounts,
     };
-  }, [dataMaps, isUpcomingToggleEnabled, selectedOpponents, homeAway]);
+  }, [dataMaps, isUpcomingToggleEnabled, selectedOpponents, homeAwaySetting]);
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -176,7 +176,7 @@ export default function ScheduleViewer({
         </div>
         <div className="hidden h-6 w-px bg-white/20 sm:block" />
         <div className="flex items-center gap-3">
-          <HomeAwayFilter value={homeAway} onChange={setHomeAway} />
+          <HomeAwayFilter value={homeAwaySetting} onChange={setHomeAwaySetting} />
           <div className="h-6 w-px bg-white/20" />
           <div
             className="flex rounded-md bg-white/10 p-0.5 text-sm font-medium
