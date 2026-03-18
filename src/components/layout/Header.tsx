@@ -19,7 +19,7 @@ export default function Header() {
             alt="Minnesota Twins logo"
             width={64}
             height={64}
-            className="object-contain"
+            className="h-full w-full object-contain"
           />
         </div>
       </div>
