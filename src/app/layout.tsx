@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "../components/layout/Header";
 import PageContent from "../components/layout/PageContent";
+import ScheduleDataProvider from "../providers/ScheduleDataProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,9 @@ export default function RootLayout({
         >
           <div className="mx-auto flex w-full max-w-4xl flex-col">
             <Header />
-            <PageContent>{children}</PageContent>
+            <ScheduleDataProvider>
+              <PageContent>{children}</PageContent>
+            </ScheduleDataProvider>
           </div>
         </div>
       </body>

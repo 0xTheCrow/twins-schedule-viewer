@@ -2,7 +2,6 @@ export interface TeamData {
   team: { id: number; name: string };
   score?: number;
   leagueRecord?: { wins: number; losses: number };
-  [key: string]: unknown;
 }
 
 export interface TeamDataWithGames extends TeamData {
@@ -33,7 +32,6 @@ export interface GameData {
   isDayGame: boolean;
   month: number;
   venueName: string;
-  [key: string]: unknown;
 }
 
 export interface ScheduleMaps {

@@ -9,15 +9,11 @@ import MonthNav from "@/components/schedule/MonthNav";
 import OpponentFilter from "@/components/schedule/OpponentFilter";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import buildScheduleMaps from "@/lib/buildScheduleMaps";
-import { GameData } from "@/types/schedule";
+import { useScheduleData } from "@/providers/ScheduleDataContext";
 
-export default function ScheduleViewer({
-  rawData,
-  refreshScheduleAction,
-}: {
-  rawData: { dates: { games: GameData[] }[] } | null;
-  refreshScheduleAction: () => Promise<void>;
-}) {
+export default function ScheduleViewer() {
+  const { rawScheduleData, refreshScheduleAction } = useScheduleData();
+  
   const [isUpcomingToggleEnabled, setIsUpcomingToggleEnabled] =
     useState<boolean>(true);
   const [selectedOpponents, setSelectedOpponents] = useState<string[]>([]);
@@ -42,8 +38,8 @@ export default function ScheduleViewer({
   }, []);
 
   const dataMaps = useMemo(
-    () => (rawData ? buildScheduleMaps(rawData) : null),
-    [rawData],
+    () => (rawScheduleData ? buildScheduleMaps(rawScheduleData) : null),
+    [rawScheduleData],
   );
 
   const { 
