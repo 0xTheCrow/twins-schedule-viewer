@@ -31,7 +31,7 @@ function DropdownMenuContent({
     MenuPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset"
   >) {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown: MenuPrimitive.Popup.Props["onKeyDown"] = (e) => {
     if (e.key === "Tab") {
       e.preventDefault();
       const key = e.shiftKey ? "ArrowUp" : "ArrowDown";
