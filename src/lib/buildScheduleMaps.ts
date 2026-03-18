@@ -39,7 +39,7 @@ export default function buildScheduleMaps(rawData: {
         opponent,
         isAway,
         isDayGame,
-        month: gameDate.getMonth(),
+        month: gameDate.getUTCMonth(),
         venueName,
       });
 
