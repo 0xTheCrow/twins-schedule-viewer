@@ -46,57 +46,57 @@ export default function ScheduleViewer({
     [rawData],
   );
 
-  const { filteredGameIds, pastCount, upcomingCount, months, monthGameCounts } =
-    useMemo(() => {
-      if (!dataMaps)
-        return {
-          filteredGameIds: [],
-          pastCount: 0,
-          upcomingCount: 0,
-          months: [],
-          monthGameCounts: {},
-        };
-
-      const passesFilter = (gameId: string) => {
-        const gameData = dataMaps.gameMap.get(gameId);
-        if (!gameData) return false;
-        if (
-          selectedOpponents.length > 0 &&
-          !selectedOpponents.includes(String(gameData.opponent.team.id))
-        )
-          return false;
-        if (homeAway === "home" && gameData.isAway) return false;
-        if (homeAway === "away" && !gameData.isAway) return false;
-        return true;
-      };
-
-      const filteredPast = dataMaps.pastGames.filter(passesFilter);
-      const filteredUpcoming = dataMaps.upcomingGames.filter(passesFilter);
-      const filteredGameIds = isUpcomingToggleEnabled
-        ? filteredUpcoming
-        : filteredPast;
-
-      const months: number[] = [];
-      const monthGameCounts: Record<number, number> = {};
-      const seen = new Set<number>();
-      for (const gameId of filteredGameIds) {
-        const gameData = dataMaps.gameMap.get(gameId)!;
-        monthGameCounts[gameData.month] =
-          (monthGameCounts[gameData.month] || 0) + 1;
-        if (!seen.has(gameData.month)) {
-          seen.add(gameData.month);
-          months.push(gameData.month);
-        }
-      }
-
+  const { 
+    filteredGameIds, 
+    pastCount, 
+    upcomingCount, 
+    monthsWithGames, 
+    monthGameCounts 
+  } = useMemo(() => {
+    if (!dataMaps) {
       return {
-        filteredGameIds,
-        pastCount: filteredPast.length,
-        upcomingCount: filteredUpcoming.length,
-        months,
-        monthGameCounts,
+        filteredGameIds: [],
+        pastCount: 0,
+        upcomingCount: 0,
+        monthsWithGames: [],
+        monthGameCounts: new Map(),
       };
-    }, [dataMaps, isUpcomingToggleEnabled, selectedOpponents, homeAway]);
+    }
+
+    const passesFilter = (gameId: string) => {
+      const gameData = dataMaps.gameMap.get(gameId);
+      if (!gameData) return false;
+      if (
+        selectedOpponents.length > 0 &&
+        !selectedOpponents.includes(String(gameData.opponent.team.id))
+      )
+        return false;
+      if (homeAway === "home" && gameData.isAway) return false;
+      if (homeAway === "away" && !gameData.isAway) return false;
+      return true;
+    }
+
+    const filteredPast = dataMaps.pastGames.filter(passesFilter);
+    const filteredUpcoming = dataMaps.upcomingGames.filter(passesFilter);
+    const filteredGameIds = isUpcomingToggleEnabled
+      ? filteredUpcoming
+      : filteredPast;
+
+    const monthGameCounts = new Map<number, number>();
+    for (const gameId of filteredGameIds) {
+      const gameData = dataMaps.gameMap.get(gameId)!;
+      monthGameCounts.set(gameData.month, (monthGameCounts.get(gameData.month) ?? 0) + 1);
+    }
+    const monthsWithGames = [...monthGameCounts.keys()];
+
+    return {
+      filteredGameIds,
+      pastCount: filteredPast.length,
+      upcomingCount: filteredUpcoming.length,
+      monthsWithGames,
+      monthGameCounts,
+    };
+  }, [dataMaps, isUpcomingToggleEnabled, selectedOpponents, homeAway]);
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -104,17 +104,17 @@ export default function ScheduleViewer({
     const updateActiveMonth = () => {
       if (isScrollingRef.current) return;
       const dividers = document.querySelectorAll("[data-month]");
-      let closest: Element | null = null;
-      let closestDist = Infinity;
-      dividers.forEach((el) => {
-        const dist = Math.abs(el.getBoundingClientRect().top);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closest = el;
+      let closestElement: Element | null = null;
+      let closestDistance = Infinity;
+      dividers.forEach((dividerElement) => {
+        const dividerDistance = Math.abs(dividerElement.getBoundingClientRect().top);
+        if (dividerDistance < closestDistance) {
+          closestDistance = dividerDistance;
+          closestElement = dividerElement;
         }
       });
-      if (closest) {
-        setActiveMonth(Number((closest as Element).getAttribute("data-month")));
+      if (closestElement) {
+        setActiveMonth(Number((closestElement as Element).getAttribute("data-month")));
       }
     };
 
@@ -239,7 +239,7 @@ export default function ScheduleViewer({
             <GameList gameIds={filteredGameIds} gameMap={dataMaps.gameMap} />
           </div>
           <MonthNav
-            months={months}
+            months={monthsWithGames}
             monthGameCounts={monthGameCounts}
             activeMonth={activeMonth}
             onMonthClick={(month, i) =>

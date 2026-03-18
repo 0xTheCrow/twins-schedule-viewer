@@ -20,7 +20,7 @@ export default function MonthNav({
   onMonthClick,
 }: {
   months: number[];
-  monthGameCounts: Record<number, number>;
+  monthGameCounts: Map<number, number>;
   activeMonth: number | null;
   onMonthClick: (month: number, index: number) => void;
 }) {
@@ -46,7 +46,7 @@ export default function MonthNav({
                 : "bg-white/20 text-white/60"
             }`}
           >
-            {monthGameCounts[month]}
+            {monthGameCounts.get(month)}
           </span>
         </button>
       ))}

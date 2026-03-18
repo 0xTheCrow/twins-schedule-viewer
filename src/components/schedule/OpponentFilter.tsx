@@ -22,7 +22,7 @@ export default function OpponentFilter({
 }) {
   const anchor = useComboboxAnchor();
 
-  const opponents = Array.from(opponentMap.entries())
+  const opponentItems = Array.from(opponentMap.entries())
     .sort(([, a], [, b]) => a.team.name.localeCompare(b.team.name))
     .map(([id, opponent]) => ({
       value: String(id),
@@ -31,7 +31,7 @@ export default function OpponentFilter({
 
   return (
     <Combobox
-      items={opponents}
+      items={opponentItems}
       multiple
       value={selectedOpponents}
       onValueChange={onChange}
@@ -65,7 +65,6 @@ export default function OpponentFilter({
           <button
             type="button"
             onMouseDown={(e) => {
-              e.preventDefault();
               onChange([]);
             }}
             className="text-muted-foreground hover:bg-accent
